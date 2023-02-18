@@ -1,0 +1,64 @@
+*{
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Roboto;
+    color: limegreen;
+    background-color: rgb(0, 0, 0);
+}
+
+h1{
+    margin-top: 2rem;
+    font-weight: 400;
+    font-size: 3.5rem;
+}
+
+button{
+    border: 1px solid limegreen;
+    font-family: Roboto;
+    font-size: 1.75rem;
+    padding: 1rem;
+    font-weight: lighter;
+    margin: .2rem;
+    color: limegreen;
+    background-color: black;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10rem;
+}
+
+.calculator{
+    border: 2px solid limegreen;
+    background-color: black;
+    padding: 2rem 1rem 1rem;
+    border-radius: 10px;
+}
+.output{
+    white-space: normal;
+    overflow-wrap: break-word;
+    border: 1px solid limegreen;
+    color: limegreen;
+    text-align:end;
+    font-size: 3.25rem;
+    min-height: 4rem;
+    width: auto;
+    max-width: 19.25rem;
+    margin: 5px;
+}
+.input{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+button:hover {
+    background-color: rgba(50, 205, 50, 0.2);
+}
+
+
