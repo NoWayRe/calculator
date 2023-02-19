@@ -1,18 +1,29 @@
 const display = document.querySelector(".output");
 const equals = document.querySelector(".equal");
 const decimal= document.querySelector(".decimal");
-const deleteKey = document.querySelectorAll(".delete");
+const deleteKey = document.querySelector(".delete");
 const resetButton = document.querySelector(".reset");
 const numbers = document.querySelectorAll(".number");
 const operators = document.querySelectorAll(".operator");
+let result = "";
+let operationComplete = false;
 
 
-// Event listeners to display the values and operator symbols in the calculator output div.
+// Displays the values and operator symbols in the calculator output div.
 
 for (i = 0; i < numbers.length; i++){
     numbers[i].addEventListener("click", function(event) {
-        const digit = document.createTextNode(event.target.textContent);
-        display.appendChild(digit);
+        if (operationComplete){
+            clear();
+            operationComplete = false
+            const digit = document.createTextNode(event.target.textContent);
+            display.appendChild(digit);
+        }
+        else {
+            const digit = document.createTextNode(event.target.textContent);
+            display.appendChild(digit);
+        }
+        
     });
 }
 
@@ -25,22 +36,41 @@ for (i = 0; i < operators.length; i++){
     });
 }
 
-decimal.addEventListener("click", function(){
-    // The regular expression is used here to test for and prevent 2 consecutive decimals
-    const pattern = /\.{2}/;
-    const dot = document.createTextNode(decimal.textContent);
+// Removes the last item from the display
 
-    if (display.textContent !== "" && !display.textContent.includes("+") && !display.textContent.includes("-") && !display.textContent.includes("*") && !display.textContent.includes("/") && !display.textContent.includes(".")){
-        display.appendChild(dot);
-    }
-    else if (display.textContent.includes(".")) {
-        if (display.textContent.split(".").length-1 < 2 && pattern.test(display.textContent) || (display.textContent.includes("+") || display.textContent.includes("-") && display.textContent.includes("*") || display.textContent.includes("/") || display.textContent.includes(".") && pattern.test(display.textContent))){
-            display.appendChild(dot);
-        }
-    }
+deleteKey.addEventListener("click", function(){
+   display.textContent = display.textContent.slice(0, display.textContent.length - 1);
 })
 
-// Event Listener to clear the text form the display.
+
+// Adds decimal
+
+decimal.addEventListener("click", function(){
+    const dot = document.createTextNode(decimal.textContent);
+
+    // If the display includes only numbers, add decimal.
+
+if (display.textContent !== "" && display.textContent[display.textContent.length - 1] !== "." && display.textContent.split(".").length-1 === 0 && !display.textContent.includes("+") && !display.textContent.includes("-") && !display.textContent.includes("*") && !display.textContent.includes("/")){
+
+    display.appendChild(dot);
+}
+
+    // If the display includes a number with no decimal and an opeator, add decimal as long as the decimal is not next to an operator
+
+ else if (display.textContent.split(".").length-1 === 0 && ((display.textContent.includes("+") || display.textContent.includes("-") || display.textContent.includes("*") || display.textContent.includes("/")) && (display.textContent[display.textContent.length - 1] !== "+" && display.textContent[display.textContent.length - 1] !== "-" && display.textContent[display.textContent.length - 1] !== "*" && display.textContent[display.textContent.length - 1] !== "/"))) {
+
+    display.appendChild(dot);
+ } 
+
+ // If the display includes a number with decimal and an opeator, add decimal as long as the decimal is not next to an operator
+
+ else if (display.textContent.split(".").length-1 === 1 && display.textContent[display.textContent.length - 1] !== "." && (display.textContent[display.textContent.length - 1] !== "+" && display.textContent[display.textContent.length - 1] !== "-" && display.textContent[display.textContent.length - 1] !== "*" && display.textContent[display.textContent.length - 1] !== "/") && (!display.textContent.slice(display.textContent.indexOf("+")+1).includes(".")  || !display.textContent.slice(display.textContent.indexOf("-")+1).includes(".") || !display.textContent.slice(display.textContent.indexOf("*")+1).includes(".") || !display.textContent.slice(display.textContent.indexOf("/")+1).includes(".")))   {
+
+    display.appendChild(dot);
+ }
+})
+
+// Event Listener to clear the text from the display.
 
 resetButton.addEventListener("click", function(){
     clear();
@@ -49,34 +79,44 @@ resetButton.addEventListener("click", function(){
 equals.addEventListener("click", function(){
     let num1;
     let num2;
+
     if (display.textContent !== "" && (display.textContent.includes("+") || display.textContent.includes("-") || display.textContent.includes("*") || display.textContent.includes("/"))){
+
         operate(num1, num2);
     }
+
+    operationComplete = true;
 })
 
 //Operation functions
 
 function add(a, b){
-    return a + b;
+    result = a + b;
+    return result;
 }
 
 function subtract(a, b){
-    return a - b;
+    result = a - b;
+    return result;
 }
 
 function multiply(a, b){
-    return a * b;
+    result = a * b;
+    return result;
 }
 
 function divide(a, b){
-    return a / b;
+    result = a / b;
+    return result;
 }
 
-// This function separates the 2 operands based on the index of the operator in the text content of the display and in turn displays the result based on the operator.
+// This function separates the 2 operands based on the index of the operator in the text content of the display and in turn, displays the result based on the operator.
 
 function operate(a, b){
     let operatorIndex;
+
     if (display.textContent.includes("+")) {
+
         operatorIndex = display.textContent.indexOf("+");
         a = Number(display.textContent.slice(0, operatorIndex));
         b = Number(display.textContent.slice(operatorIndex+1));
@@ -84,6 +124,7 @@ function operate(a, b){
     }
 
     else if (display.textContent.includes("-")) {
+
         operatorIndex = display.textContent.indexOf("-");
         a = Number(display.textContent.slice(0, operatorIndex));
         b = Number(display.textContent.slice(operatorIndex+1));
@@ -91,6 +132,7 @@ function operate(a, b){
     }
 
     else if (display.textContent.includes("*")) {
+
         operatorIndex = display.textContent.indexOf("*");
         a = Number(display.textContent.slice(0, operatorIndex));
         b = Number(display.textContent.slice(operatorIndex+1));
@@ -98,15 +140,16 @@ function operate(a, b){
     }
 
     else if (display.textContent.includes("/")) {
+
         operatorIndex = display.textContent.indexOf("/");
         a = Number(display.textContent.slice(0, operatorIndex));
         b = Number(display.textContent.slice(operatorIndex+1));
         display.textContent = divide(a, b);
-    }
-            
+    } 
 }
 
 //Reset function
+
 function clear(){
     display.textContent = "";
 }
