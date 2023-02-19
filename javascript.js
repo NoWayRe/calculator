@@ -1,5 +1,6 @@
 const display = document.querySelector(".output");
 const equals = document.querySelector(".equal");
+const minus = document.querySelector(".minus");
 const decimal= document.querySelector(".decimal");
 const deleteKey = document.querySelector(".delete");
 const resetButton = document.querySelector(".reset");
@@ -13,16 +14,9 @@ let operationComplete = false;
 
 for (i = 0; i < numbers.length; i++){
     numbers[i].addEventListener("click", function(event) {
-        if (operationComplete){
-            clear();
-            operationComplete = false
+
             const digit = document.createTextNode(event.target.textContent);
             display.appendChild(digit);
-        }
-        else {
-            const digit = document.createTextNode(event.target.textContent);
-            display.appendChild(digit);
-        }
         
     });
 }
@@ -30,7 +24,10 @@ for (i = 0; i < numbers.length; i++){
 for (i = 0; i < operators.length; i++){
     operators[i].addEventListener("click", function(event) {
         const symbol = document.createTextNode(event.target.textContent);
-        if (display.textContent !== "" && !display.textContent.includes("+") && !display.textContent.includes("-") && !display.textContent.includes("*") && !display.textContent.includes("/")){
+        if (display.textContent !== "" && !display.textContent.includes("+") && !display.textContent.includes("*") && !display.textContent.includes("/") && display.textContent.split("-").length-1 < 2 && display.textContent[display.textContent.length - 1] !== "-"){
+            display.appendChild(symbol);
+        }
+        else if (display.textContent === "" && event.target.textContent === "-" ){
             display.appendChild(symbol);
         }
     });
@@ -85,7 +82,9 @@ equals.addEventListener("click", function(){
         operate(num1, num2);
     }
 
-    operationComplete = true;
+    else if (display.textContent[0] === "-"){
+        return;
+    }
 })
 
 //Operation functions
@@ -118,22 +117,16 @@ function operate(a, b){
     if (display.textContent.includes("+")) {
 
         operatorIndex = display.textContent.indexOf("+");
+        console.log(operatorIndex);
         a = Number(display.textContent.slice(0, operatorIndex));
         b = Number(display.textContent.slice(operatorIndex+1));
         display.textContent = add(a, b);
     }
 
-    else if (display.textContent.includes("-")) {
-
-        operatorIndex = display.textContent.indexOf("-");
-        a = Number(display.textContent.slice(0, operatorIndex));
-        b = Number(display.textContent.slice(operatorIndex+1));
-        display.textContent = subtract(a, b);
-    }
-
     else if (display.textContent.includes("*")) {
 
         operatorIndex = display.textContent.indexOf("*");
+        console.log(operatorIndex);
         a = Number(display.textContent.slice(0, operatorIndex));
         b = Number(display.textContent.slice(operatorIndex+1));
         display.textContent = multiply(a, b);
@@ -142,10 +135,35 @@ function operate(a, b){
     else if (display.textContent.includes("/")) {
 
         operatorIndex = display.textContent.indexOf("/");
+        console.log(operatorIndex);
         a = Number(display.textContent.slice(0, operatorIndex));
         b = Number(display.textContent.slice(operatorIndex+1));
         display.textContent = divide(a, b);
     } 
+
+    else if (display.textContent.includes("-") && display.textContent[0] !== "-") {
+
+        operatorIndex = display.textContent.indexOf("-");
+        console.log(operatorIndex);
+        a = Number(display.textContent.slice(0, operatorIndex));
+        b = Number(display.textContent.slice(operatorIndex+1));
+        display.textContent = subtract(a, b);
+    }
+
+    else if (display.textContent.includes("-") && display.textContent[0] === "-") {
+
+        operatorIndex = display.textContent.indexOf("-", 2);
+        if (operatorIndex !== -1){
+            a = Number(display.textContent.slice(0, operatorIndex));
+            b = Number(display.textContent.slice(operatorIndex+1));
+            display.textContent = subtract(a, b);
+        }
+
+        else{
+            return display.textContent;
+        }
+        
+    }
 }
 
 //Reset function
